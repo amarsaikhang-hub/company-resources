@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>AI Тулгалт — Нөөцийн сан</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f6ff;--surface:#fff;--surface2:#f7f9fc;--border:#e2e8f0;--accent:#0ea5e9;--accent2:#0284c7;--accent-bg:rgba(14,165,233,.08);--text:#0f172a;--text2:#475569;--text3:#94a3b8;--goods:#10b981;--goods-bg:rgba(16,185,129,.08);--compare:#f59e0b;--compare-bg:rgba(245,158,11,.08);--open:#8b5cf6;--open-bg:rgba(139,92,246,.08);--danger:#ef4444;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);font-family:var(--sans);font-size:14px;color:var(--text)}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;gap:24px;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100}
+.logo{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo-dot{width:10px;height:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);border-radius:50%}
+.nav{display:flex;gap:4px;margin-left:16px}
+.nav a{font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;text-decoration:none;color:var(--text3)}
+.nav a:hover{background:var(--surface2);color:var(--text)}
+.nav a.active{background:var(--accent-bg);color:var(--accent2);font-weight:600}
+.user-info{margin-left:auto;display:flex;align-items:center;gap:10px}
+.user-badge{font-size:12px;color:var(--accent2);background:var(--accent-bg);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:5px 12px}
+.logout-btn{font-size:12px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer}
+.content{flex:1;padding:28px 32px;max-width:1100px;margin:0 auto;width:100%}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.input-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:20px}
+.input-card label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.input-card input, .input-card textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit;margin-bottom:12px}
+.input-card textarea{min-height:160px;resize:vertical;line-height:1.6}
+.run-btn{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;padding:12px 26px;cursor:pointer;box-shadow:0 2px 8px rgba(109,40,217,.2)}
+.run-btn:hover{transform:translateY(-1px)}
+.run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.summary{background:linear-gradient(135deg,rgba(139,92,246,.05),rgba(109,40,217,.03));border:1px solid rgba(139,92,246,.12);border-radius:12px;padding:16px 20px;margin-bottom:16px;font-size:14px;line-height:1.7;color:var(--text2)}
+.section{margin-bottom:20px}
+.section-title{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;color:var(--text2)}
+.section-title .cnt{font-family:var(--mono);background:var(--surface2);color:var(--text3);padding:2px 8px;border-radius:5px;font-size:11px}
+.item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px}
+.item-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.item-name{font-size:14px;font-weight:600;flex:1}
+.item-meta{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.item-reason{font-size:12px;color:var(--text2);margin-top:4px}
+.missing{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:14px 16px}
+.missing-title{font-size:12px;font-weight:600;color:var(--danger);margin-bottom:8px}
+.missing-item{font-size:12px;color:var(--text2);padding:3px 0}
+.loading{text-align:center;padding:40px;color:var(--text3)}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:#8b5cf6;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <a class="logo" href="/"><div class="logo-dot"></div>НӨӨЦИЙН САН</a>
+    <nav class="nav">
+      <a href="/">Нүүр</a><a href="/employees">Ажилтан</a><a href="/equipment">Техник</a>
+      <a href="/contracts">Гэрээ</a><a href="/match" class="active">AI Тулгалт</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-badge" id="ub"></span>
+      <button class="logout-btn" onclick="doLogout()">Гарах</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page-title">AI Нөөц тулгалт</div>
+    <div class="page-sub">Тендерийн шаардлага дээр суурилж таны нөөц (ажилтан, техник, гэрээ)-өөс тохирохыг санал болгоно</div>
+
+    <div class="input-card">
+      <label>Тендерийн дугаар (нэмэлт)</label>
+      <input id="tender_no" placeholder="ЭҮТӨҮГ/20260102126/01/01 — tender_db-аас шаардлага татна">
+      <label>Эсвэл шаардлагын текст шууд оруулах</label>
+      <textarea id="reqs" placeholder="3.1. Инженерийн зэрэгтэй 5+ жилийн туршлагатай мэргэжилтэн&#10;3.2. 10+ тонны ачаа тээвэрлэх машин&#10;3.3. Өмнөх 3 жилд ижил төстэй 100 сая ₮-өөс дээш гэрээ..."></textarea>
+      <button class="run-btn" id="run" onclick="run()">🤖 AI Шинжилгээ</button>
+    </div>
+
+    <div id="loading" class="loading" style="display:none">
+      <div class="spinner"></div>
+      <div>AI нөөцтэй харьцуулж байна...</div>
+    </div>
+
+    <div id="result" style="display:none">
+      <div class="summary" id="summary"></div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon" style="background:var(--accent-bg)">👥</span> Санал болгох ажилтнууд <span class="cnt" id="e-cnt">0</span></div>
+        <div id="emp-list"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon" style="background:var(--compare-bg)">🚜</span> Санал болгох техник <span class="cnt" id="q-cnt">0</span></div>
+        <div id="eq-list"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon" style="background:var(--goods-bg)">📝</span> Санал болгох гэрээ <span class="cnt" id="c-cnt">0</span></div>
+        <div id="ct-list"></div>
+      </div>
+
+      <div id="missing-section" style="display:none">
+        <div class="missing">
+          <div class="missing-title">⚠ Дутуу байгаа зүйл</div>
+          <div id="missing-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let userInfo = null;
+
+async function check() {
+  const r = await fetch('/api/me');
+  if (!r.ok) { location.href='/'; return; }
+  userInfo = (await r.json()).user;
+  document.getElementById('ub').textContent = userInfo.full_name;
+}
+async function doLogout() { await fetch('/api/logout',{method:'POST'}); location.href='/'; }
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+async function run() {
+  const tender_no = document.getElementById('tender_no').value.trim();
+  const requirements = document.getElementById('reqs').value.trim();
+  if (!tender_no && !requirements) { alert('Шаардлага эсвэл тендер дугаар оруулна уу'); return; }
+
+  const btn = document.getElementById('run');
+  btn.disabled = true;
+  document.getElementById('loading').style.display = '';
+  document.getElementById('result').style.display = 'none';
+
+  try {
+    const r = await fetch('/api/ai/match-resources', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({tender_no, requirements})
+    });
+    const d = await r.json();
+    document.getElementById('loading').style.display = 'none';
+
+    if (!r.ok) { alert(d.error || 'Алдаа'); btn.disabled = false; return; }
+
+    document.getElementById('result').style.display = '';
+    document.getElementById('summary').textContent = d.summary || '';
+
+    renderList('emp-list', 'e-cnt', d.employees || [], 'employee');
+    renderList('eq-list', 'q-cnt', d.equipment || [], 'equipment');
+    renderList('ct-list', 'c-cnt', d.contracts || [], 'contract');
+
+    const missing = d.missing || [];
+    if (missing.length) {
+      document.getElementById('missing-section').style.display = '';
+      document.getElementById('missing-list').innerHTML = missing.map(m => `<div class="missing-item">• ${esc(m)}</div>`).join('');
+    } else {
+      document.getElementById('missing-section').style.display = 'none';
+    }
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    alert('Сервертэй холбогдож чадсангүй');
+  }
+  btn.disabled = false;
+}
+
+function renderList(listId, cntId, items, type) {
+  document.getElementById(cntId).textContent = items.length;
+  if (!items.length) { document.getElementById(listId).innerHTML = '<div style="color:var(--text3);font-size:12px;padding:10px">Тохирох нөөц олдсонгүй</div>'; return; }
+  document.getElementById(listId).innerHTML = items.map(item => {
+    const d = item.detail || {};
+    let name = '', meta = '';
+    if (type === 'employee') {
+      name = `${esc(d.last_name||'')} ${esc(d.first_name||'')}`;
+      meta = `${esc(d.position||'')} · ${esc(d.education||'')} ${esc(d.profession||'')} · ${d.experience_years||0} жил`;
+    } else if (type === 'equipment') {
+      name = esc(d.name||'');
+      meta = `${esc(d.category||'')} · ${esc(d.model||'')} · ${d.quantity||0}${esc(d.unit||'ш')} · ${esc(d.condition||'')}`;
+    } else {
+      name = esc(d.name||'');
+      const amt = d.amount ? Number(d.amount).toLocaleString('mn-MN') : '';
+      meta = `${esc(d.customer||'')} · ${amt} ${esc(d.currency||'')} · ${esc(d.status||'')}`;
+    }
+    return `<div class="item">
+      <div class="item-header">
+        <span class="item-name">${name}</span>
+        <span class="item-meta">${meta}</span>
+      </div>
+      <div class="item-reason">${esc(item.reason||'')}</div>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', check);
+</script>
+</body>
+</html>

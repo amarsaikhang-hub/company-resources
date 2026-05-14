@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>Гэрээ — Нөөцийн сан</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f6ff;--surface:#fff;--surface2:#f7f9fc;--border:#e2e8f0;--accent:#0ea5e9;--accent2:#0284c7;--accent-bg:rgba(14,165,233,.08);--text:#0f172a;--text2:#475569;--text3:#94a3b8;--goods:#10b981;--goods-bg:rgba(16,185,129,.08);--compare:#f59e0b;--compare-bg:rgba(245,158,11,.08);--danger:#ef4444;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);font-family:var(--sans);font-size:14px;color:var(--text)}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;gap:24px;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100}
+.logo{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo-dot{width:10px;height:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);border-radius:50%}
+.nav{display:flex;gap:4px;margin-left:16px}
+.nav a{font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;text-decoration:none;color:var(--text3)}
+.nav a:hover{background:var(--surface2);color:var(--text)}
+.nav a.active{background:var(--accent-bg);color:var(--accent2);font-weight:600}
+.user-info{margin-left:auto;display:flex;align-items:center;gap:10px}
+.user-badge{font-size:12px;color:var(--accent2);background:var(--accent-bg);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:5px 12px}
+.logout-btn{font-size:12px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer}
+.toolbar{padding:16px 32px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.search{flex:1;max-width:320px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;outline:none;font-size:13px}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;outline:none}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;cursor:pointer}
+.cnt{font-size:12px;color:var(--text3);margin-left:auto}
+.table-wrap{flex:1;overflow:auto;background:var(--surface2)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2}
+th{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:13px 14px;text-align:left;white-space:nowrap}
+tbody tr{background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer}
+tbody tr:hover{background:#f0f9ff;box-shadow:inset 3px 0 0 var(--accent)}
+td{padding:13px 14px;font-size:13px}
+.td-mono{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.amount{font-family:var(--mono);font-size:12px;text-align:right;font-weight:600}
+.badge{display:inline-flex;font-size:10px;font-weight:600;padding:4px 10px;border-radius:6px}
+.badge-done{background:var(--goods-bg);color:var(--goods)}
+.badge-progress{background:var(--compare-bg);color:var(--compare)}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.15);z-index:199;display:none;backdrop-filter:blur(3px)}
+.overlay.show{display:block}
+.panel{position:fixed;top:0;right:0;width:520px;height:100vh;background:var(--surface);border-left:1px solid var(--border);box-shadow:-8px 0 30px rgba(0,0,0,.06);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:28px}
+.panel.open{transform:translateX(0)}
+.panel-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer}
+.panel h2{font-size:18px;font-weight:600;margin-bottom:16px;padding-right:40px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.field input, .field select, .field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;outline:none;font-family:inherit}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.save-row{display:flex;gap:8px;margin-top:16px}
+.save-row button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;color:#fff}
+.save-btn{background:var(--accent)}
+.del-btn{background:var(--danger)}
+.docs-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.docs-title{font-size:12px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.doc-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px}
+.doc-item .type{font-family:var(--mono);font-size:10px;color:var(--accent2);font-weight:600}
+.doc-item .name{flex:1}
+.doc-item .size{color:var(--text3);font-family:var(--mono);font-size:11px}
+.doc-actions button{font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--surface);cursor:pointer}
+.doc-upload{margin-top:10px;padding:14px;border:2px dashed #bae6fd;border-radius:10px;background:var(--surface2)}
+.doc-upload input[type=text]{width:100%;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);margin-bottom:6px}
+.doc-upload input[type=file]{display:block;margin:8px 0;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <a class="logo" href="/"><div class="logo-dot"></div>НӨӨЦИЙН САН</a>
+    <nav class="nav">
+      <a href="/">Нүүр</a><a href="/employees">Ажилтан</a><a href="/equipment">Техник</a>
+      <a href="/contracts" class="active">Гэрээ</a><a href="/match">AI Тулгалт</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-badge" id="ub"></span>
+      <button class="logout-btn" onclick="doLogout()">Гарах</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input class="search" id="search" placeholder="Хайх... (нэр, захиалагч, №)" oninput="debounce()">
+    <select class="filter-select" id="f-status" onchange="load()">
+      <option value="">Бүх статус</option>
+      <option value="Гүйцэтгэж буй">Гүйцэтгэж буй</option>
+      <option value="Дууссан">Дууссан</option>
+    </select>
+    <button class="btn" onclick="openNew()">+ Гэрээ нэмэх</button>
+    <span class="cnt" id="cnt"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Гэрээ №</th><th>Нэр</th><th>Захиалагч</th><th>Төрөл</th>
+        <th>Эхлэх</th><th>Дуусах</th><th style="text-align:right">Дүн</th><th>Статус</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <button class="panel-close" onclick="closePanel()">✕</button>
+  <h2 id="panel-title">Гэрээ</h2>
+  <div class="row-2">
+    <div class="field"><label>Гэрээ №</label><input id="f-contract_no"></div>
+    <div class="field"><label>Төрөл</label><input id="f-contract_type" list="c-types">
+      <datalist id="c-types"><option>Бараа нийлүүлэх</option><option>Ажил гүйцэтгэх</option><option>Үйлчилгээ</option></datalist>
+    </div>
+  </div>
+  <div class="field"><label>Нэр</label><input id="f-name"></div>
+  <div class="field"><label>Захиалагч</label><input id="f-customer"></div>
+  <div class="row-2">
+    <div class="field"><label>Эхлэх огноо</label><input type="date" id="f-start_date"></div>
+    <div class="field"><label>Дуусах огноо</label><input type="date" id="f-end_date"></div>
+  </div>
+  <div class="row-2">
+    <div class="field"><label>Дүн</label><input type="number" step="0.01" id="f-amount"></div>
+    <div class="field"><label>Валют</label><select id="f-currency"><option>MNT</option><option>USD</option><option>CNY</option></select></div>
+  </div>
+  <div class="field"><label>Статус</label><select id="f-status">
+    <option>Гүйцэтгэж буй</option><option>Дууссан</option><option>Цуцалсан</option>
+  </select></div>
+  <div class="field"><label>Тайлбар</label><textarea id="f-description" rows="2"></textarea></div>
+  <div class="field"><label>Тэмдэглэл</label><textarea id="f-notes" rows="2"></textarea></div>
+
+  <div class="save-row">
+    <button class="del-btn" id="del-btn" onclick="delItem()" style="display:none">Устгах</button>
+    <button class="save-btn" onclick="save()">Хадгалах</button>
+  </div>
+
+  <div class="docs-section" id="docs-section" style="display:none">
+    <div class="docs-title">Баримт бичиг (гэрээ, актын хуулбар...)</div>
+    <div id="docs-list"></div>
+    <div class="doc-upload">
+      <input type="text" id="doc-type" placeholder="Төрөл" list="doc-types">
+      <datalist id="doc-types"><option>Гэрээ</option><option>Акт</option><option>Лавлагаа</option><option>Нэмэлт хэлэлцээр</option></datalist>
+      <input type="file" id="doc-file" accept=".pdf,.png,.jpg,.jpeg,.docx">
+      <button class="btn" onclick="uploadDoc()">Оруулах</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FIELDS = ["contract_no","name","customer","contract_type","start_date","end_date","amount","currency","status","description","notes"];
+let currentId = null;
+let timer = null;
+let userInfo = null;
+
+async function check() {
+  const r = await fetch('/api/me');
+  if (!r.ok) { location.href='/'; return; }
+  userInfo = (await r.json()).user;
+  document.getElementById('ub').textContent = userInfo.full_name;
+  load();
+}
+async function doLogout() { await fetch('/api/logout',{method:'POST'}); location.href='/'; }
+function debounce() { clearTimeout(timer); timer = setTimeout(load, 300); }
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+async function load() {
+  const q = document.getElementById('search').value.trim();
+  const st = document.getElementById('f-status').value;
+  let url = '/api/contracts';
+  const params = [];
+  if (q) params.push(`search=${encodeURIComponent(q)}`);
+  if (st) params.push(`status=${encodeURIComponent(st)}`);
+  if (params.length) url += '?' + params.join('&');
+  const r = await fetch(url);
+  const data = await r.json();
+  document.getElementById('cnt').textContent = `${data.length} гэрээ`;
+  document.getElementById('tbody').innerHTML = data.map(e => {
+    const amt = e.amount ? Number(e.amount).toLocaleString('mn-MN') : '';
+    const stCls = e.status==='Дууссан'?'badge-done':'badge-progress';
+    return `<tr onclick="openEdit(${e.id})">
+      <td class="td-mono" style="color:var(--accent2)">${esc(e.contract_no||'')}</td>
+      <td style="font-weight:500;max-width:240px">${esc(e.name||'')}</td>
+      <td style="color:var(--text2);font-size:12px">${esc(e.customer||'')}</td>
+      <td style="font-size:12px">${esc(e.contract_type||'')}</td>
+      <td class="td-mono">${esc((e.start_date||'').substring(0,10))}</td>
+      <td class="td-mono">${esc((e.end_date||'').substring(0,10))}</td>
+      <td class="amount">${amt} ${esc(e.currency||'')}</td>
+      <td><span class="badge ${stCls}">${esc(e.status||'')}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function openNew() {
+  currentId = null;
+  document.getElementById('panel-title').textContent = 'Шинэ гэрээ';
+  FIELDS.forEach(f => { const el=document.getElementById('f-'+f); if(el) el.value = f==='currency'?'MNT' : f==='status'?'Гүйцэтгэж буй' : ''; });
+  document.getElementById('del-btn').style.display='none';
+  document.getElementById('docs-section').style.display='none';
+  openPanel();
+}
+
+async function openEdit(id) {
+  currentId = id;
+  const r = await fetch('/api/contracts/'+id);
+  const d = await r.json();
+  document.getElementById('panel-title').textContent = d.name || 'Гэрээ';
+  FIELDS.forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if (el) el.value = d[f] != null ? (typeof d[f]==='string' && d[f].includes('T') ? d[f].split('T')[0] : d[f]) : '';
+  });
+  document.getElementById('del-btn').style.display='';
+  document.getElementById('docs-section').style.display='';
+  renderDocs(d.documents || []);
+  openPanel();
+}
+
+function openPanel() { document.getElementById('panel').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+function closePanel() { document.getElementById('panel').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+async function save() {
+  const data = {};
+  FIELDS.forEach(f => { const el=document.getElementById('f-'+f); if(el) data[f] = el.value || null; });
+  const url = currentId ? '/api/contracts/'+currentId : '/api/contracts';
+  const method = currentId ? 'PUT' : 'POST';
+  const r = await fetch(url, {method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+  if (r.ok) { const d = await r.json(); if (!currentId) currentId = d.id; load(); closePanel(); }
+}
+
+async function delItem() {
+  if (!currentId || !confirm('Устгах уу?')) return;
+  await fetch('/api/contracts/'+currentId, {method:'DELETE'});
+  closePanel(); load();
+}
+
+function renderDocs(docs) {
+  document.getElementById('docs-list').innerHTML = docs.map(d => `<div class="doc-item">
+    <span class="type">${esc(d.doc_type||'—')}</span>
+    <span class="name">${esc(d.filename)}</span>
+    <span class="size">${(d.file_size/1024).toFixed(0)} KB</span>
+    <div class="doc-actions" style="display:flex;gap:4px">
+      <button onclick="window.open('/api/documents/${d.id}/download','_blank')">📥</button>
+      <button onclick="delDoc(${d.id})">✕</button>
+    </div>
+  </div>`).join('');
+}
+
+async function uploadDoc() {
+  if (!currentId) return;
+  const file = document.getElementById('doc-file').files[0];
+  if (!file) return alert('Файл сонгоно уу');
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('entity_type', 'contract');
+  fd.append('entity_id', currentId);
+  fd.append('doc_type', document.getElementById('doc-type').value.trim());
+  const r = await fetch('/api/documents/upload', {method:'POST', body:fd});
+  if (r.ok) { document.getElementById('doc-file').value=''; document.getElementById('doc-type').value=''; openEdit(currentId); }
+}
+
+async function delDoc(id) {
+  if (!confirm('Баримт устгах уу?')) return;
+  await fetch('/api/documents/'+id, {method:'DELETE'});
+  openEdit(currentId);
+}
+
+document.addEventListener('DOMContentLoaded', check);
+</script>
+</body>
+</html>

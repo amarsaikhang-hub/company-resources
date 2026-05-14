@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нөөцийн сан</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f6ff;--surface:#fff;--surface2:#f7f9fc;--border:#e2e8f0;--border2:#cbd5e1;--accent:#0ea5e9;--accent2:#0284c7;--accent-bg:rgba(14,165,233,.08);--text:#0f172a;--text2:#475569;--text3:#94a3b8;--goods:#10b981;--goods-bg:rgba(16,185,129,.08);--compare:#f59e0b;--compare-bg:rgba(245,158,11,.08);--open:#8b5cf6;--open-bg:rgba(139,92,246,.08);--work:#3b82f6;--work-bg:rgba(59,130,246,.08);--danger:#ef4444;--shadow-lg:0 10px 25px rgba(0,0,0,.07);--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;gap:24px;position:sticky;top:0;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);z-index:100}
+.logo{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:10px;height:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);border-radius:50%}
+.nav{display:flex;gap:4px;margin-left:16px}
+.nav a{font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;text-decoration:none;color:var(--text3);transition:all .15s}
+.nav a:hover{background:var(--surface2);color:var(--text)}
+.nav a.active{background:var(--accent-bg);color:var(--accent2);font-weight:600}
+.user-info{display:flex;align-items:center;gap:10px;margin-left:auto}
+.user-badge{font-size:12px;font-weight:500;color:var(--accent2);background:var(--accent-bg);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:5px 12px}
+.logout-btn{font-size:12px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer}
+.logout-btn:hover{color:var(--danger);border-color:var(--danger)}
+.content{flex:1;padding:28px 32px;max-width:1200px;margin:0 auto;width:100%}
+.page-title{font-size:24px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;transition:all .2s;text-decoration:none;color:inherit}
+.stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-2px)}
+.sc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.sc-num{font-family:var(--mono);font-size:28px;font-weight:700;line-height:1}
+.sc-label{font-size:12px;color:var(--text3);margin-top:4px}
+.sc-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;text-decoration:none;color:inherit;transition:all .2s}
+.quick-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);border-color:var(--accent)}
+.qc-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.qc-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.qc-desc{font-size:12px;color:var(--text3)}
+.login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e0f2fe 0%,#f0f6ff 50%,#ede9fe 100%)}
+.login-screen.hidden{display:none}
+.login-box{width:420px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:44px 40px;box-shadow:var(--shadow-lg)}
+.login-box h2{font-size:18px;font-weight:600;text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px}
+.form-field{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;padding:12px 16px;outline:none}
+.form-input:focus{border-color:var(--accent)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+.err{font-size:12px;color:var(--danger);text-align:center;min-height:16px;margin-top:12px}
+@media(max-width:900px){.stat-grid,.quick-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <h2>Нөөцийн сан — Нэвтрэх</h2>
+    <div class="login-sub">tender_db хэрэглэгчээр нэвтэрнэ</div>
+    <div class="form-field"><label class="form-label">Нэр</label><input class="form-input" id="u" placeholder="admin"></div>
+    <div class="form-field"><label class="form-label">Нууц үг</label><input class="form-input" type="password" id="p" placeholder="admin123"></div>
+    <button class="btn-primary" onclick="doLogin()">Нэвтрэх</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div class="app" id="main" style="display:none">
+  <header>
+    <a class="logo" href="/"><div class="logo-dot"></div>НӨӨЦИЙН САН</a>
+    <nav class="nav">
+      <a href="/" class="active">Нүүр</a>
+      <a href="/employees">Ажилтан</a>
+      <a href="/equipment">Техник</a>
+      <a href="/contracts">Гэрээ</a>
+      <a href="/match">AI Тулгалт</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-badge" id="ub"></span>
+      <button class="logout-btn" onclick="doLogout()">Гарах</button>
+    </div>
+  </header>
+  <div class="content">
+    <div class="page-title">Компанийн нөөцийн сан</div>
+    <div class="page-sub">Ажилтан, тоног төхөөрөмж, гэрээний мэдээлэл — тендерийн шаардлагад AI-аар тулгана</div>
+
+    <div class="stat-grid">
+      <a class="stat-card" href="/employees">
+        <div class="sc-icon" style="background:var(--accent-bg)">👥</div>
+        <div class="sc-num" style="color:var(--accent)" id="s-emp">—</div>
+        <div class="sc-label">Ажилтан</div>
+        <div class="sc-sub" id="s-emp-sub"></div>
+      </a>
+      <a class="stat-card" href="/equipment">
+        <div class="sc-icon" style="background:var(--compare-bg)">🚜</div>
+        <div class="sc-num" style="color:var(--compare)" id="s-eq">—</div>
+        <div class="sc-label">Техник</div>
+        <div class="sc-sub" id="s-eq-sub"></div>
+      </a>
+      <a class="stat-card" href="/contracts">
+        <div class="sc-icon" style="background:var(--goods-bg)">📝</div>
+        <div class="sc-num" style="color:var(--goods)" id="s-ct">—</div>
+        <div class="sc-label">Гэрээ</div>
+        <div class="sc-sub" id="s-ct-sub"></div>
+      </a>
+      <div class="stat-card">
+        <div class="sc-icon" style="background:var(--open-bg)">📄</div>
+        <div class="sc-num" style="color:var(--open)" id="s-doc">—</div>
+        <div class="sc-label">Баримт</div>
+        <div class="sc-sub">бүх хавсралт</div>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <a class="quick-card" href="/employees">
+        <div class="qc-icon" style="background:var(--accent-bg)">➕</div>
+        <div class="qc-title">Ажилтан нэмэх</div>
+        <div class="qc-desc">Анкет, диплом, үнэмлэх, НДШ лавлагаа</div>
+      </a>
+      <a class="quick-card" href="/equipment">
+        <div class="qc-icon" style="background:var(--compare-bg)">🔧</div>
+        <div class="qc-title">Техник нэмэх</div>
+        <div class="qc-desc">Машин, тоног төхөөрөмж, гэрчилгээ</div>
+      </a>
+      <a class="quick-card" href="/match">
+        <div class="qc-icon" style="background:var(--open-bg)">🤖</div>
+        <div class="qc-title">AI Тулгалт</div>
+        <div class="qc-desc">Тендерийн шаардлагад тохирох нөөц олох</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+let user = null;
+async function check() {
+  const r = await fetch('/api/me');
+  if (r.ok) { const d = await r.json(); if (d.logged_in) { user = d.user; show(); return; } }
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+function show() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('main').style.display = 'flex';
+  document.getElementById('ub').textContent = user.full_name;
+  loadStats();
+}
+async function doLogin() {
+  const u = document.getElementById('u').value.trim();
+  const p = document.getElementById('p').value.trim();
+  document.getElementById('err').textContent = '';
+  try {
+    const r = await fetch('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const d = await r.json();
+    if (r.ok) { user = d.user; show(); }
+    else document.getElementById('err').textContent = d.error;
+  } catch(e) { document.getElementById('err').textContent = 'Алдаа'; }
+}
+async function doLogout() { await fetch('/api/logout',{method:'POST'}); location.reload(); }
+async function loadStats() {
+  const r = await fetch('/api/stats');
+  if (!r.ok) return;
+  const d = await r.json();
+  document.getElementById('s-emp').textContent = d.employees.cnt || 0;
+  document.getElementById('s-emp-sub').textContent = `${d.employees.depts||0} хэлтэс`;
+  document.getElementById('s-eq').textContent = d.equipment.cnt || 0;
+  document.getElementById('s-eq-sub').textContent = `${d.equipment.total_qty||0} нэгж`;
+  document.getElementById('s-ct').textContent = d.contracts.cnt || 0;
+  const amt = d.contracts.total_amount ? (d.contracts.total_amount/1000000).toLocaleString('mn-MN',{maximumFractionDigits:0}) : '0';
+  document.getElementById('s-ct-sub').textContent = `${amt} сая ₮`;
+  document.getElementById('s-doc').textContent = d.documents.cnt || 0;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  check();
+  document.getElementById('p').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+});
+</script>
+</body>
+</html>

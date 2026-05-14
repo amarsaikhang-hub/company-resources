@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>Ажилтан — Нөөцийн сан</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f6ff;--surface:#fff;--surface2:#f7f9fc;--border:#e2e8f0;--accent:#0ea5e9;--accent2:#0284c7;--accent-bg:rgba(14,165,233,.08);--text:#0f172a;--text2:#475569;--text3:#94a3b8;--goods:#10b981;--danger:#ef4444;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);font-family:var(--sans);font-size:14px;color:var(--text)}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;gap:24px;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100}
+.logo{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo-dot{width:10px;height:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);border-radius:50%}
+.nav{display:flex;gap:4px;margin-left:16px}
+.nav a{font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;text-decoration:none;color:var(--text3)}
+.nav a:hover{background:var(--surface2);color:var(--text)}
+.nav a.active{background:var(--accent-bg);color:var(--accent2);font-weight:600}
+.user-info{margin-left:auto;display:flex;align-items:center;gap:10px}
+.user-badge{font-size:12px;color:var(--accent2);background:var(--accent-bg);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:5px 12px}
+.logout-btn{font-size:12px;color:var(--text3);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer}
+.toolbar{padding:16px 32px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.search{flex:1;max-width:320px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;outline:none;font-size:13px}
+.search:focus{border-color:var(--accent)}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;padding:9px 18px;border-radius:8px;cursor:pointer}
+.cnt{font-size:12px;color:var(--text3);margin-left:auto}
+.table-wrap{flex:1;overflow:auto;background:var(--surface2)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2}
+th{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:13px 14px;text-align:left;white-space:nowrap}
+tbody tr{background:var(--surface);border-bottom:1px solid var(--border);transition:all .15s;cursor:pointer}
+tbody tr:hover{background:#f0f9ff;box-shadow:inset 3px 0 0 var(--accent)}
+td{padding:13px 14px;font-size:13px}
+.td-mono{font-family:var(--mono);font-size:11px;color:var(--text3)}
+
+/* Panel */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.15);z-index:199;display:none;backdrop-filter:blur(3px)}
+.overlay.show{display:block}
+.panel{position:fixed;top:0;right:0;width:520px;height:100vh;background:var(--surface);border-left:1px solid var(--border);box-shadow:-8px 0 30px rgba(0,0,0,.06);z-index:200;transform:translateX(100%);transition:transform .3s;overflow-y:auto;padding:28px}
+.panel.open{transform:translateX(0)}
+.panel-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text3);cursor:pointer}
+.panel h2{font-size:18px;font-weight:600;margin-bottom:16px;padding-right:40px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.field input, .field select, .field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;outline:none;font-family:inherit}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent)}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.save-row{display:flex;gap:8px;margin-top:16px}
+.save-row button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.save-btn{background:var(--accent);border:none;color:#fff}
+.del-btn{background:var(--danger);border:none;color:#fff}
+
+/* Documents */
+.docs-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.docs-title{font-size:12px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.doc-slot{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.doc-slot-header{display:flex;align-items:center;gap:8px}
+.doc-slot-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
+.doc-slot-label{font-size:12px;font-weight:600;color:var(--text2);flex:1}
+.doc-slot-add{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid rgba(14,165,233,.3);background:var(--accent-bg);color:var(--accent2);cursor:pointer;font-weight:600;white-space:nowrap}
+.doc-slot-add:hover{background:rgba(14,165,233,.15)}
+.doc-file-row{display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-size:11px}
+.doc-file-row .fname{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-file-row .fsize{font-family:var(--mono);color:var(--text3);font-size:10px;flex-shrink:0}
+.doc-file-row button{font-size:10px;padding:2px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer}
+.doc-file-row .doc-del:hover{color:var(--danger);border-color:var(--danger)}
+.doc-empty{font-size:11px;color:var(--text3);font-style:italic;padding:2px 0}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <a class="logo" href="/"><div class="logo-dot"></div>НӨӨЦИЙН САН</a>
+    <nav class="nav">
+      <a href="/">Нүүр</a>
+      <a href="/employees" class="active">Ажилтан</a>
+      <a href="/equipment">Техник</a>
+      <a href="/contracts">Гэрээ</a>
+      <a href="/match">AI Тулгалт</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-badge" id="ub"></span>
+      <button class="logout-btn" onclick="doLogout()">Гарах</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input class="search" id="search" placeholder="Хайх... (нэр, албан тушаал, регистр)" oninput="debounce()">
+    <button class="btn" onclick="openNew()">+ Ажилтан нэмэх</button>
+    <button class="btn-ghost" id="scan-btn" onclick="runScan()">📂 Inbox уншуулах</button>
+    <span class="cnt" id="cnt"></span>
+  </div>
+  <div id="scan-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2)"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Регистр</th><th>Овог, Нэр</th><th>Албан тушаал</th><th>Хэлтэс</th>
+        <th>Мэргэжил</th><th>Туршлага</th><th>Утас</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <button class="panel-close" onclick="closePanel()">✕</button>
+  <h2 id="panel-title">Ажилтны мэдээлэл</h2>
+  <div class="row-2">
+    <div class="field"><label>Овог</label><input id="f-last_name"></div>
+    <div class="field"><label>Нэр</label><input id="f-first_name"></div>
+  </div>
+  <div class="row-2">
+    <div class="field"><label>Регистр</label><input id="f-register_no"></div>
+    <div class="field"><label>Төрсөн огноо</label><input type="date" id="f-birth_date"></div>
+  </div>
+  <div class="row-2">
+    <div class="field"><label>Хүйс</label><select id="f-gender"><option value="">—</option><option>Эр</option><option>Эм</option></select></div>
+    <div class="field"><label>Хэлтэс</label><input id="f-department"></div>
+  </div>
+  <div class="field"><label>Албан тушаал</label><input id="f-position"></div>
+  <div class="row-2">
+    <div class="field"><label>Боловсрол</label><input id="f-education" placeholder="Бакалавр/Магистр..."></div>
+    <div class="field"><label>Мэргэжил</label><input id="f-profession"></div>
+  </div>
+  <div class="row-2">
+    <div class="field"><label>Ажилд орсон огноо</label><input type="date" id="f-work_start_date"></div>
+    <div class="field"><label>Туршлага (жил)</label><input type="number" step="0.1" id="f-experience_years"></div>
+  </div>
+  <div class="row-2">
+    <div class="field"><label>Утас</label><input id="f-phone"></div>
+    <div class="field"><label>И-мэйл</label><input type="email" id="f-email"></div>
+  </div>
+  <div class="field"><label>Хаяг</label><input id="f-address"></div>
+  <div class="field"><label>Тэмдэглэл</label><textarea id="f-notes" rows="2"></textarea></div>
+
+  <div class="save-row">
+    <button class="del-btn" id="del-btn" onclick="delItem()" style="display:none">Устгах</button>
+    <button class="save-btn" onclick="save()">Хадгалах</button>
+  </div>
+
+  <div class="docs-section" id="docs-section" style="display:none">
+    <div class="docs-title">Баримт бичиг</div>
+    <div id="inbox-path" style="font-size:11px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:10px;font-family:var(--mono)"></div>
+    <div id="docs-list"></div>
+  </div>
+  <!-- Hidden file inputs per slot -->
+  <input type="file" id="fi-cv"     accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" onchange="uploadSlot('CV')">
+  <input type="file" id="fi-diplom" accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" onchange="uploadSlot('Диплом')">
+  <input type="file" id="fi-id"     accept=".pdf,.png,.jpg,.jpeg"       style="display:none" onchange="uploadSlot('Иргэний үнэмлэх')">
+  <input type="file" id="fi-ndsh"   accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" onchange="uploadSlot('НДШ лавлагаа')">
+  <input type="file" id="fi-cert"   accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" onchange="uploadSlot('Гэрчилгээ')">
+</div>
+
+<script>
+const FIELDS = ["register_no","last_name","first_name","birth_date","gender","position","department","education","profession","work_start_date","experience_years","phone","email","address","notes"];
+let currentId = null;
+let timer = null;
+let userInfo = null;
+
+async function check() {
+  const r = await fetch('/api/me');
+  if (!r.ok) { location.href='/'; return; }
+  const d = await r.json();
+  userInfo = d.user;
+  document.getElementById('ub').textContent = userInfo.full_name;
+  load();
+}
+async function doLogout() { await fetch('/api/logout',{method:'POST'}); location.href='/'; }
+function debounce() { clearTimeout(timer); timer = setTimeout(load, 300); }
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+async function load() {
+  const q = document.getElementById('search').value.trim();
+  const r = await fetch('/api/employees' + (q?`?search=${encodeURIComponent(q)}`:''));
+  const data = await r.json();
+  document.getElementById('cnt').textContent = `${data.length} ажилтан`;
+  document.getElementById('tbody').innerHTML = data.map(e => `<tr onclick="openEdit(${e.id})">
+    <td class="td-mono">${esc(e.register_no||'')}</td>
+    <td style="font-weight:500">${esc(e.last_name||'')} ${esc(e.first_name||'')}</td>
+    <td>${esc(e.position||'')}</td>
+    <td style="color:var(--text2);font-size:12px">${esc(e.department||'')}</td>
+    <td style="font-size:12px">${esc(e.profession||'')}</td>
+    <td class="td-mono">${e.experience_years||0} жил</td>
+    <td class="td-mono">${esc(e.phone||'')}</td>
+  </tr>`).join('');
+}
+
+function openNew() {
+  currentId = null;
+  document.getElementById('panel-title').textContent = 'Шинэ ажилтан';
+  FIELDS.forEach(f => { const el = document.getElementById('f-'+f); if (el) el.value = ''; });
+  document.getElementById('del-btn').style.display = 'none';
+  document.getElementById('docs-section').style.display = 'none';
+  openPanel();
+}
+
+async function openEdit(id) {
+  currentId = id;
+  const r = await fetch('/api/employees/'+id);
+  const d = await r.json();
+  document.getElementById('panel-title').textContent = `${d.last_name||''} ${d.first_name||''}`;
+  FIELDS.forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if (el) el.value = d[f] != null ? (typeof d[f]==='string' && d[f].includes('T') ? d[f].split('T')[0] : d[f]) : '';
+  });
+  document.getElementById('del-btn').style.display = '';
+  document.getElementById('docs-section').style.display = '';
+
+  // Inbox хавтасны зам
+  const last = d.last_name || '';
+  const first = d.first_name || '';
+  const folderName = (last[0] || '?').toUpperCase() + '.' + first;
+  document.getElementById('inbox-path').innerHTML =
+    `📂 Файлуудыг энд хийнэ үү: <b>uploads/employees/inbox/${esc(folderName)}/</b>`;
+
+  renderDocs(d.documents || []);
+  openPanel();
+}
+
+function openPanel() {
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+async function save() {
+  const data = {};
+  FIELDS.forEach(f => { const el = document.getElementById('f-'+f); if (el) data[f] = el.value || null; });
+  const url = currentId ? '/api/employees/'+currentId : '/api/employees';
+  const method = currentId ? 'PUT' : 'POST';
+  const r = await fetch(url, {method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+  if (r.ok) {
+    const d = await r.json();
+    if (!currentId) currentId = d.id;
+    load();
+    closePanel();
+  }
+}
+
+async function delItem() {
+  if (!currentId) return;
+  if (!confirm('Устгах уу?')) return;
+  await fetch('/api/employees/'+currentId, {method:'DELETE'});
+  closePanel();
+  load();
+}
+
+const DOC_SLOTS = [
+  { key: 'cv',     type: 'CV',               label: 'Анкет / CV',        icon: '📄', multi: false, fi: 'fi-cv'     },
+  { key: 'diplom', type: 'Диплом',            label: 'Диплом',            icon: '🎓', multi: false, fi: 'fi-diplom' },
+  { key: 'id',     type: 'Иргэний үнэмлэх',  label: 'Иргэний үнэмлэх',  icon: '🪪', multi: false, fi: 'fi-id'     },
+  { key: 'ndsh',   type: 'НДШ лавлагаа',     label: 'НДШ лавлагаа',     icon: '🏥', multi: false, fi: 'fi-ndsh'   },
+  { key: 'cert',   type: 'Гэрчилгээ',        label: 'Гэрчилгээ',        icon: '📜', multi: true,  fi: 'fi-cert'   },
+];
+
+function renderDocs(docs) {
+  const byType = {};
+  for (const d of docs) {
+    const t = d.doc_type || '';
+    (byType[t] = byType[t] || []).push(d);
+  }
+
+  document.getElementById('docs-list').innerHTML = DOC_SLOTS.map(slot => {
+    const files = byType[slot.type] || [];
+    const fileRows = files.map(d => `
+      <div class="doc-file-row">
+        <span class="fname" title="${esc(d.filename)}">${esc(d.filename)}</span>
+        <span class="fsize">${(d.file_size/1024).toFixed(0)} KB</span>
+        <button onclick="window.open('/api/documents/${d.id}/download','_blank')">📥</button>
+        <button class="doc-del" onclick="delDoc(${d.id})">✕</button>
+      </div>`).join('');
+
+    const emptyRow = files.length === 0
+      ? `<div class="doc-empty">Оруулаагүй</div>` : '';
+
+    return `<div class="doc-slot">
+      <div class="doc-slot-header">
+        <span class="doc-slot-icon">${slot.icon}</span>
+        <span class="doc-slot-label">${slot.label}</span>
+        <button class="doc-slot-add" onclick="document.getElementById('${slot.fi}').click()">
+          ${files.length > 0 && !slot.multi ? '↩ Солих' : '+ Нэмэх'}
+        </button>
+      </div>
+      ${emptyRow}${fileRows}
+    </div>`;
+  }).join('');
+}
+
+async function uploadSlot(docType) {
+  if (!currentId) return;
+  const slot = DOC_SLOTS.find(s => s.type === docType);
+  if (!slot) return;
+  const fi = document.getElementById(slot.fi);
+  const file = fi.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('entity_type', 'employee');
+  fd.append('entity_id', currentId);
+  fd.append('doc_type', docType);
+  fi.value = '';
+
+  const r = await fetch('/api/documents/upload', {method:'POST', body:fd});
+  if (r.ok) openEdit(currentId);
+}
+
+async function delDoc(id) {
+  if (!confirm('Баримт устгах уу?')) return;
+  await fetch('/api/documents/'+id, {method:'DELETE'});
+  openEdit(currentId);
+}
+
+async function runScan() {
+  const btn = document.getElementById('scan-btn');
+  btn.textContent = '⏳ Уншиж байна...';
+  btn.disabled = true;
+  try {
+    const r = await fetch('/api/employees/scan-inbox', {method:'POST'});
+    const d = await r.json();
+    const msgs = [];
+    if (d.imported > 0) msgs.push(`✅ ${d.imported} файл бүртгэгдлэа`);
+    if (d.skipped > 0)  msgs.push(`⏭ ${d.skipped} файл аль хэдийн байна`);
+    if (d.errors?.length) msgs.push(`⚠ ${d.errors.length} алдаа`);
+    showToast(msgs.join('  |  ') || '📂 Шинэ файл олдсонгүй');
+    if (d.imported > 0 && currentId) openEdit(currentId);
+  } catch(e) {
+    showToast('❌ Алдаа гарлаа');
+  } finally {
+    btn.textContent = '📂 Inbox уншуулах';
+    btn.disabled = false;
+  }
+}
+
+function showToast(msg, ms=3500) {
+  const el = document.getElementById('scan-toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display='none'; }, ms);
+}
+
+document.addEventListener('DOMContentLoaded', check);
+</script>
+</body>
+</html>
